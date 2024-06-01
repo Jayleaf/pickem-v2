@@ -1,0 +1,18 @@
+[package]
+name = "pikem"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dotenv = "0.15.0"
+rusqlite = { version = "0.31.0",features = ["bundled"] }
+serenity = { git = "https://github.com/serenity-rs/serenity", version = "0.12.1" }
+tokio = { version = "1.37.0", features = ["full"] }
+
+[dependencies.uuid]
+version = "1.8.0"
+features = [
+    "v4",                # Lets you generate random UUIDs
+]
