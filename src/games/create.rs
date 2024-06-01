@@ -6,10 +6,10 @@ use crate::db::structs;
 pub async fn create(ctx: Context, msg: Message) {
     // Proper Formatting:
     // <category>, <home_team>, <away_team>
-    // Ex: !cg NFL, Packers, Bears
+    // Ex: !cg NFL Packers Bears
 
-    let content = msg.content.replace("!cg", "");
-    let content = content.trim().split(",").collect::<Vec<_>>();
+    let content = msg.content.replace("!crg", "");
+    let content = content.trim().split(" ").collect::<Vec<_>>();
     println!("{:?}", content);
     let category = {
         match content[0].trim() {
