@@ -5,6 +5,7 @@ use uuid::Uuid;
 pub enum Categories {
     NFL,
     NBA,
+    UFC,
 }
 
 impl Categories {
@@ -12,12 +13,21 @@ impl Categories {
         match self {
             Categories::NFL => "NFL".to_string(),
             Categories::NBA => "NBA".to_string(),
+            Categories::UFC => "UFC".to_string(),
+        }
+    }
+    pub fn from_string(str: &str) -> Categories {
+        match str {
+            "NFL" => Categories::NFL,
+            "NBA" => Categories::NBA,
+            "UFC" => Categories::UFC,
+            _ => panic!("Invalid category"),
         }
     }
 
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 
 pub struct Record {
     pub id: String,
@@ -25,6 +35,7 @@ pub struct Record {
     pub wins: i32,
     pub losses: i32,
     pub ties: i32,
+    pub log: String,
 }
 
 #[derive(Debug, Clone)]

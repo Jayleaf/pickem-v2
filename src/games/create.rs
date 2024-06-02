@@ -15,6 +15,7 @@ pub async fn create(ctx: Context, msg: Message) {
         match content[0].trim() {
             "NFL" => structs::Categories::NFL,
             "NBA" => structs::Categories::NBA,
+            "UFC" => structs::Categories::UFC,
             _ => { 
                 msg.channel_id.say(&ctx.http, "Invalid Category (NFL and NBA supported)")
                 .await
@@ -35,7 +36,8 @@ pub async fn create(ctx: Context, msg: Message) {
         Ok(row.get::<_, i32>(0)?)
     }).expect("Failed to check if away team exists");
     println!("Home Team Exists: {}, Away Team Exists: {}", home_team_exists, away_team_exists);
-    if home_team_exists == 0 || away_team_exists == 0 {
+    println!("{:?}", category.to_string());
+    if (home_team_exists == 0 || away_team_exists == 0) && category.to_string() != "UFC" {
         msg.channel_id.say(&ctx.http, "Invalid team(s)").await.expect("Failed to send message...");
         return;
     }

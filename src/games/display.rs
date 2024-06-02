@@ -20,6 +20,7 @@ pub async fn display(channel_id: ChannelId, ctx: Context, game_id: &str) {
                 match row.get::<_, String>(1)?.as_str() { // Add type annotation for the `get` method
                     "NFL" => Categories::NFL,
                     "NBA" => Categories::NBA,
+                    "UFC" => Categories::UFC,
                     _ => panic!("Invalid category") // improper
                 }
             },
@@ -32,14 +33,22 @@ pub async fn display(channel_id: ChannelId, ctx: Context, game_id: &str) {
     }).expect("Failed to get game");
     
     let connection = Connection::open("teams.db").expect("Failed to open database");
-    let home_team_emoji = connection.query_row("SELECT emoji FROM teams WHERE name = ?1", params![game.home_team], |row| {
-        Ok(row.get::<_, String>(0)?.to_string())
-    }).expect("Failed to get home team emoji");
-    let away_team_emoji = connection.query_row("SELECT emoji FROM teams WHERE name = ?1", params![game.away_team], |row| {
-        Ok(row.get::<_, String>(0)?.to_string())
-    }).expect("Failed to get away team emoji");
+    let home_team_emoji =  {
+        if game.category.to_string() != "UFC" {
+            connection.query_row("SELECT emoji FROM teams WHERE name = ?1", params![game.home_team], |row| {
+                Ok(row.get::<_, String>(0)?.to_string())
+            }).expect("Failed to get home team emoji")
+        } else { "🔴".to_string() }
+    };
+    let away_team_emoji = {
+        if game.category.to_string() != "UFC" {
+            connection.query_row("SELECT emoji FROM teams WHERE name = ?1", params![game.away_team], |row| {
+                Ok(row.get::<_, String>(0)?.to_string())
+            }).expect("Failed to get away team emoji")
+        } else { "🔵".to_string() }
+    };
     let poll = CreatePoll::new()
-        .question(format!("{y} at {x} || {z}", x = game.home_team, y = game.away_team, z = game.category.to_string()))
+        .question(format!("{y} v. {x} || {z}", x = game.home_team, y = game.away_team, z = game.category.to_string()))
         .answers(vec![
             CreatePollAnswer::new().emoji(home_team_emoji).text(format!("{x}", x=game.home_team)),
             CreatePollAnswer::new().emoji(away_team_emoji).text(format!("{y}", y=game.away_team)),

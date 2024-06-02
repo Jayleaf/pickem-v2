@@ -12,6 +12,7 @@ pub async fn list(ctx: Context, channel_id: ChannelId, msg: &str) {
         match content {
             "NFL" => crate::db::structs::Categories::NFL,
             "NBA" => crate::db::structs::Categories::NBA,
+            "UFC" => crate::db::structs::Categories::UFC,
             _ => { 
                 return
             }
@@ -37,6 +38,7 @@ pub async fn list(ctx: Context, channel_id: ChannelId, msg: &str) {
                         match category.as_str() {
                             "NFL" => crate::db::structs::Categories::NFL,
                             "NBA" => crate::db::structs::Categories::NBA,
+                            "UFC" => crate::db::structs::Categories::UFC,
                             _ => panic!("Invalid category")
                         }
                     },
@@ -55,7 +57,7 @@ pub async fn list(ctx: Context, channel_id: ChannelId, msg: &str) {
     let mut embed = CreateEmbed::new()
         .title(format!("Category: {x} | Count: {y}", x = category.to_string(), y = games.len()));
     for game in games {
-        embed = embed.field(format!("{x}", x = game.id), format!("{x} at {y} | Winner: {z}", x = game.home_team, y = game.away_team, z = game.winner), false);
+        embed = embed.field(format!("{x}", x = game.id), format!("{x} v. {y} | Winner: {z}", x = game.home_team, y = game.away_team, z = game.winner), false);
     }
     let message = CreateMessage::new().embed(embed);
     let _ = channel_id.send_message(&ctx.http, message).await;

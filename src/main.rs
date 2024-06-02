@@ -15,7 +15,9 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         let command = msg.content.split_whitespace().collect::<Vec<_>>()[0];
         let content = msg.content.replace(command, "").trim().to_string();
-        println!("Command: {}, Content: {}", command, content);
+        if msg.author.id != 395205580668534785 && !content.starts_with("!r") {
+            return;
+        }
         match command {
             "!ping" => {
                 if let Err(x) = msg.channel_id.say(&ctx.http, "Pong!").await {
@@ -26,9 +28,7 @@ impl EventHandler for Handler {
                 general::help::help(&msg.channel_id, &ctx).await;
             }
             "!eval" => {
-                if msg.author.id != 395205580668534785 {
-                    return;
-                }
+            
                 eval::eval(&content, &msg.channel_id, &ctx).await;
             }
             "!crg" => {

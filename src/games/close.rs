@@ -13,6 +13,7 @@ pub async fn close(ctx: serenity::client::Context, channel_id: serenity::model::
                 match row.get::<_, String>(1)?.as_str() {
                     "NFL" => crate::db::structs::Categories::NFL,
                     "NBA" => crate::db::structs::Categories::NBA,
+                    "UFC" => crate::db::structs::Categories::UFC,
                     _ => panic!("Invalid category")
                 }
             },
