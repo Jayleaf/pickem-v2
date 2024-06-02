@@ -45,6 +45,7 @@ pub async fn record(ctx: &Context, channel_id: ChannelId, user: UserId) {
         embed = embed.field(format!("{x}", x = record.category.to_string()), format!("{x} Wins | {y} Losses | {z} Ties", x = record.wins, y = record.losses, z = record.ties), false);
         log_field.push(record.log.split("||").collect::<Vec<&str>>().join("\n"));
     }
+    embed = embed.field("Log", log_field.join("\n"), false);
     let message = CreateMessage::new().embed(embed);
     let _ = channel_id.send_message(&ctx.http, message).await;
 }

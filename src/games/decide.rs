@@ -40,6 +40,7 @@ pub async fn decide(ctx: Context, channel_id: &ChannelId, content: &str) {
         channel_id.say(&ctx.http, "Invalid team").await.expect("Failed to send message...");
         return;
     }
+    connection.execute("UPDATE games SET winner = ?1 WHERE id = ?2", params![team, game_id]).expect("Failed to update winner");
     let message_id = MessageId::from(game.message_id.parse::<u64>().expect("Failed to parse message id"));
     let message = channel_id.message(&ctx.http, message_id).await.expect("Failed to get message");
     let poll = message.poll.unwrap();
@@ -87,16 +88,18 @@ pub async fn decide(ctx: Context, channel_id: &ChannelId, content: &str) {
             Some(mut record) => {
                 record.wins += 1;
                 connection.execute("UPDATE records SET wins = ?1 WHERE id = ?2 AND category = ?3", params![record.wins, record.id, game.category.to_string()]).expect("Failed to update record");
+                let mut win_log = user_record.clone().unwrap().log.split("||").map(|x| x.to_string()).collect::<Vec<String>>();
+                win_log.push(format!("({} v. {}: WIN)", game.home_team, game.away_team));
+                let win_log = win_log.join("||");
+                connection.execute("UPDATE records SET log = ?1 WHERE id = ?2 AND category = ?3", params![win_log, &user_record.unwrap().id, game.category.to_string()]).expect("Failed to update record");
             },
             None => {
-                connection.execute("INSERT INTO records (id, category, wins, losses, ties) VALUES (?1, ?2, ?3, ?4, ?5)", params![user.id.to_string(), game.category.to_string(), 1, 0, 0]).expect("Failed to insert record");
+                connection.execute("INSERT INTO records (id, category, wins, losses, ties, log) VALUES (?1, ?2, ?3, ?4, ?5, ?6)", params![user.id.to_string(), game.category.to_string(), 1, 0, 0, format!("({} v. {}: WIN)", game.home_team, game.away_team)]).expect("Failed to insert record");
             }
         }
 
-        let mut win_log = user_record.clone().unwrap().log.split("||").map(|x| x.to_string()).collect::<Vec<String>>();
-        win_log.push(format!("({} v. {}: WIN)", game.home_team, game.away_team));
-        let win_log = win_log.join("||");
-        connection.execute("UPDATE records SET log = ?1 WHERE id = ?2 AND category = ?3", params![win_log, &user_record.unwrap().id, game.category.to_string()]).expect("Failed to update record");
+
+        
 
         
     }
@@ -122,15 +125,16 @@ pub async fn decide(ctx: Context, channel_id: &ChannelId, content: &str) {
             Some(mut record) => {
                 record.losses += 1;
                 connection.execute("UPDATE records SET losses = ?1 WHERE id = ?2 AND category = ?3", params![record.losses, record.id, game.category.to_string()]).expect("Failed to update record");
+                let mut loss_log = user_record.clone().unwrap().log.split("||").map(|x| x.to_string()).collect::<Vec<String>>();
+                loss_log.push(format!("({} v. {}: LOSS)", game.home_team, game.away_team));
+                let loss_log = loss_log.join("||");
+                connection.execute("UPDATE records SET log = ?1 WHERE id = ?2 AND category = ?3", params![loss_log, &user_record.unwrap().id, game.category.to_string()]).expect("Failed to update record");
             },
             None => {
-                connection.execute("INSERT INTO records (id, category, wins, losses, ties, log) VALUES (?1, ?2, ?3, ?4, ?5)", params![user.id.to_string(), game.category.to_string(), 0, 1, 0]).expect("Failed to insert record");
+                connection.execute("INSERT INTO records (id, category, wins, losses, ties, log) VALUES (?1, ?2, ?3, ?4, ?5, ?6)", params![user.id.to_string(), game.category.to_string(), 1, 0, 0, format!("({} v. {}: LOSS)", game.home_team, game.away_team)]).expect("Failed to insert record");
             }
         };
-        let mut loss_log = user_record.clone().unwrap().log.split("||").map(|x| x.to_string()).collect::<Vec<String>>();
-        loss_log.push(format!("({} v. {}: LOSS)", game.home_team, game.away_team));
-        let loss_log = loss_log.join("||");
-        connection.execute("UPDATE records SET log = ?1 WHERE id = ?2 AND category = ?3", params![loss_log, &user_record.unwrap().id, game.category.to_string()]).expect("Failed to update record");
+       
 
     }
 }

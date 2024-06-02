@@ -15,9 +15,7 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         let command = msg.content.split_whitespace().collect::<Vec<_>>()[0];
         let content = msg.content.replace(command, "").trim().to_string();
-        if msg.author.id != 395205580668534785 && !content.starts_with("!r") {
-            return;
-        }
+        
         match command {
             "!ping" => {
                 if let Err(x) = msg.channel_id.say(&ctx.http, "Pong!").await {
@@ -28,13 +26,16 @@ impl EventHandler for Handler {
                 general::help::help(&msg.channel_id, &ctx).await;
             }
             "!eval" => {
-            
+                if msg.author.id != 395205580668534785 { return; }
                 eval::eval(&content, &msg.channel_id, &ctx).await;
+
             }
             "!crg" => {
+                if msg.author.id != 395205580668534785 { return; }
                 games::create::create(ctx, msg).await;
             }
             "!dsg" => {
+                if msg.author.id != 395205580668534785 { return; }
                 games::display::display(msg.channel_id, ctx, &content).await;
             }
             "!dcg" => {
@@ -44,9 +45,10 @@ impl EventHandler for Handler {
                 games::list::list(ctx, msg.channel_id, &content).await;
             }
             "!clg" => {
+                if msg.author.id != 395205580668534785 { return; }
                 games::close::close(ctx, msg.channel_id, &content).await;
             }
-            "!r" => {
+            "!record" => {
                 user::record::record(&ctx, msg.channel_id, msg.author.id).await;
             }
 
