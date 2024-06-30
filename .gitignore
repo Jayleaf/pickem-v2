@@ -1,2 +1,5 @@
 /target
 .env
+games.db
+records.db
+teams.db

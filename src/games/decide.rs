@@ -131,7 +131,7 @@ pub async fn decide(ctx: Context, channel_id: &ChannelId, content: &str) {
                 connection.execute("UPDATE records SET log = ?1 WHERE id = ?2 AND category = ?3", params![loss_log, &user_record.unwrap().id, game.category.to_string()]).expect("Failed to update record");
             },
             None => {
-                connection.execute("INSERT INTO records (id, category, wins, losses, ties, log) VALUES (?1, ?2, ?3, ?4, ?5, ?6)", params![user.id.to_string(), game.category.to_string(), 1, 0, 0, format!("({} v. {}: LOSS)", game.home_team, game.away_team)]).expect("Failed to insert record");
+                connection.execute("INSERT INTO records (id, category, wins, losses, ties, log) VALUES (?1, ?2, ?3, ?4, ?5, ?6)", params![user.id.to_string(), game.category.to_string(), 0, 1, 0, format!("({} v. {}: LOSS)", game.home_team, game.away_team)]).expect("Failed to insert record");
             }
         };
        

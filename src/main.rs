@@ -13,7 +13,8 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        let command = msg.content.split_whitespace().collect::<Vec<_>>()[0];
+        let command = msg.content.split_whitespace().collect::<Vec<_>>();
+        let command = *command.first().expect("");
         let content = msg.content.replace(command, "").trim().to_string();
         
         match command {
@@ -39,6 +40,7 @@ impl EventHandler for Handler {
                 games::display::display(msg.channel_id, ctx, &content).await;
             }
             "!dcg" => {
+                if msg.author.id != 395205580668534785 { return; }
                 games::decide::decide(ctx, &msg.channel_id, &content).await;
             }
             "!lg" => {
