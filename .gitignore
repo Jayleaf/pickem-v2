@@ -1,4 +1,4 @@
 /target
 .env
-./games.db
-./records.db
+games.db
+records.db
