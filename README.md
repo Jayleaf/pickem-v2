@@ -1,7 +1,13 @@
-# Requirements:
+Pick-Em Bot Written in Rust.
 
-## .env file
-- `TOKEN="Bot_token_here"`
+## Supports:
+- NFL
+- NBA
+- UFC
 
-## games.db
-## records.db
+## Requirements:
+
+- .env file
+    - `TOKEN="bot_token_here"`
+- games.db
+- records.db
