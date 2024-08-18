@@ -1,4 +1,4 @@
-use rusqlite::{types::Null, Connection};
+use rusqlite::Connection;
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Copy)]

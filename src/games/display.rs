@@ -1,4 +1,4 @@
-use serenity::{all::ChannelId, builder::{CreateMessage, CreatePoll, CreatePollAnswer}, model::connection};
+use serenity::{all::ChannelId, builder::{CreateMessage, CreatePoll, CreatePollAnswer}};
 use rusqlite::{params, Connection};
 use serenity::prelude::*;
 

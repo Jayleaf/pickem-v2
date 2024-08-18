@@ -1,8 +1,7 @@
 use crate::db::structs::{Categories, Record};
-use rusqlite::params;
 use serenity::all::{ChannelId, Context, CreateEmbed, CreateMessage, UserId};
 
-pub async fn record(ctx: &Context, channel_id: ChannelId, user: UserId) {
+pub async fn record(ctx: &Context, channel_id: ChannelId, user: UserId, category: &str) {
     let records: Result<Vec<Record>, rusqlite::Error> = tokio::task::spawn_blocking({
         move || -> Result<Vec<Record>, rusqlite::Error> {
             let mut records: Vec<Record> = Vec::new();
@@ -42,10 +41,14 @@ pub async fn record(ctx: &Context, channel_id: ChannelId, user: UserId) {
         .title(format!("Records for {x}", x = user.to_string()));
     let mut log_field: Vec<String> = Vec::new();
     for record in records {
-        embed = embed.field(format!("{x}", x = record.category.to_string()), format!("{x} Wins | {y} Losses | {z} Ties", x = record.wins, y = record.losses, z = record.ties), false);
+        embed = embed.field(format!("{x}", x = record.category.to_string()), format!("{x} Wins | {y} Losses | {z} Ties", x = record.wins, y = record.losses, z = record.ties), true);
         log_field.push(record.log.split("||").collect::<Vec<&str>>().join("\n"));
     }
-    embed = embed.field("Log", log_field.join("\n"), false);
+    //embed = embed.field("Log", log_field.join("\n"), false);
+    embed = embed.description("For detailed logs of a sport, put the sport name after the command (e.x. !record UFC)");
+    if let Some(record) = records.iter().find(|x| x.category.to_string() == category) {
+        embed = embed.field(format!("{} || Detailed Log", record.category.to_string()), log_field.join("\n"), false)
+    }
     let message = CreateMessage::new().embed(embed);
     let _ = channel_id.send_message(&ctx.http, message).await;
 }

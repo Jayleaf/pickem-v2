@@ -13,8 +13,9 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        let command = msg.content.split_whitespace().collect::<Vec<_>>();
-        let command = *command.first().expect("");
+        if !msg.content.starts_with("!") {return} // will run without this line, but prevents random errors from being printed to stdout
+        let message_content = msg.content.split_whitespace().collect::<Vec<_>>();
+        let command = *message_content.first().expect("");
         let content = msg.content.replace(command, "").trim().to_string();
         
         match command {
@@ -51,7 +52,7 @@ impl EventHandler for Handler {
                 games::close::close(ctx, msg.channel_id, &content).await;
             }
             "!record" => {
-                user::record::record(&ctx, msg.channel_id, msg.author.id).await;
+                user::record::record(&ctx, msg.channel_id, msg.author.id, &content).await;
             }
 
             _ => {}

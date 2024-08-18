@@ -1,6 +1,6 @@
 
 use rusqlite::params;
-use serenity::all::{AnswerId, ChannelId, Context, MessageId};
+use serenity::all::{ChannelId, Context, MessageId};
 
 use crate::db::structs::{Categories, Game, Record};
 
