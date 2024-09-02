@@ -54,6 +54,13 @@ impl EventHandler for Handler {
             "!record" => {
                 user::record::record(&ctx, msg.channel_id, msg.author.id, &content).await;
             }
+            "!crgb" => {
+                games::create_bulk::create_bulk(ctx, msg).await;
+            }
+            "!dsgb" => {
+                if msg.author.id != 395205580668534785 { return; }
+                games::display_bulk::display_bulk(msg.channel_id, ctx, &content).await;
+            }
 
             _ => {}
         }

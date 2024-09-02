@@ -8,6 +8,9 @@ edition = "2021"
 [dependencies]
 dotenv = "0.15.0"
 rusqlite = { version = "0.31.0",features = ["bundled"] }
+serde = "1.0.209"
+serde_derive = "1.0.209"
+serde_json = "1.0.127"
 serenity = { git = "https://github.com/serenity-rs/serenity", version = "0.12.1" }
 tokio = { version = "1.37.0", features = ["full"] }
 

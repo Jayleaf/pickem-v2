@@ -6,6 +6,7 @@ pub async fn eval(msg: &str, channel_id: &ChannelId, ctx: &Context) {
         match msg.split(" ").collect::<Vec<_>>()[0] {
             "games" => "games.db",
             "records" => "records.db",
+            "teams" => "teams.db",
             _ => {
                 channel_id.say(&ctx.http, "Invalid database").await.expect("Failed to send message");
                 return;
